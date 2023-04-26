@@ -2,11 +2,14 @@
 using Microsoft.EntityFrameworkCore;
 using ms_practice.Data;
 using ms_practice.Models;
-using Newtonsoft.Json;
 using System.Text;
-using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
+using System.Linq;
+using System.Net.Http;
+using System.Collections.Generic;
+using System;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using Azure.Core;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

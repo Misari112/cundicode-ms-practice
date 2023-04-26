@@ -1,4 +1,6 @@
-﻿namespace ms_practice.Models
+﻿using System;
+
+namespace ms_practice.Models
 {
     public class ExerciseToList
     {

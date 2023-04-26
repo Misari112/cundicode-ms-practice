@@ -1,4 +1,6 @@
-﻿namespace ms_practice.Models
+﻿using System.Collections.Generic;
+
+namespace ms_practice.Models
 {
     public class NewExercise
     {
