@@ -12,8 +12,8 @@ using ms_practice.Data;
 namespace ms_practice.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230423200033_CompleteExerciseMigration")]
-    partial class CompleteExerciseMigration
+    [Migration("20230502034244_m1")]
+    partial class m1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace ms_practice.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("ms_practice.Models.CompleteProgrammingExercise", b =>
+            modelBuilder.Entity("ms_practice.Entities.CompleteProgrammingExercise", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -36,6 +36,9 @@ namespace ms_practice.Migrations
                     b.Property<string>("IdUser")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Language")
                         .IsRequired()
@@ -62,7 +65,7 @@ namespace ms_practice.Migrations
                     b.ToTable("CompleteExercises");
                 });
 
-            modelBuilder.Entity("ms_practice.Models.ProgrammingExercise", b =>
+            modelBuilder.Entity("ms_practice.Entities.ProgrammingExercise", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -120,9 +123,9 @@ namespace ms_practice.Migrations
                     b.ToTable("Exercises");
                 });
 
-            modelBuilder.Entity("ms_practice.Models.CompleteProgrammingExercise", b =>
+            modelBuilder.Entity("ms_practice.Entities.CompleteProgrammingExercise", b =>
                 {
-                    b.HasOne("ms_practice.Models.ProgrammingExercise", "ProgrammingExercise")
+                    b.HasOne("ms_practice.Entities.ProgrammingExercise", "ProgrammingExercise")
                         .WithMany()
                         .HasForeignKey("ProgrammingExerciseId")
                         .OnDelete(DeleteBehavior.Cascade)

@@ -10,12 +10,13 @@ using System.Collections.Generic;
 using System;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using ms_practice.Entities;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ms_practice.Controllers
 {
-    
+
     [Route("api/[controller]")]
     [ApiController]
     public class CodesController : ControllerBase
@@ -30,6 +31,37 @@ namespace ms_practice.Controllers
             _context = context;
         }
 
+        [HttpGet("solved/{id}")]
+        public async Task<IActionResult> SolvedExercisesGet(string id)
+        {
+            int tries = 0;
+            int solved = 0;
+            SolvedExercises solvedExercices = new SolvedExercises();
+            List<ExerciseToProfileData> exercisesToProfileData = new List<ExerciseToProfileData>();
+            List<CompleteProgrammingExercise> completeProgrammingExercises = await _context.CompleteExercises.Where(e => e.IdUser == id).ToListAsync();
+            for (int i=0;i<completeProgrammingExercises.Count;i++) {
+                completeProgrammingExercises.ElementAt(i).ProgrammingExercise = await _context.Exercises.Where(e => e.Id == completeProgrammingExercises.ElementAt(i).ProgrammingExerciseId).FirstAsync();
+                if (completeProgrammingExercises.ElementAt(i).IsCompleted == false)
+                {
+                    tries++;
+                }
+                else {
+                    solved++;
+                }
+                ExerciseToProfileData exerciseToProfileData = new ExerciseToProfileData();
+                exerciseToProfileData.Title = completeProgrammingExercises.ElementAt(i).ProgrammingExercise.Title;
+                exerciseToProfileData.DateTime = completeProgrammingExercises.ElementAt(i).SendDate;
+                exerciseToProfileData.Id = completeProgrammingExercises.ElementAt(i).ProgrammingExercise.Id;
+                exerciseToProfileData.IsCompleted = completeProgrammingExercises.ElementAt(i).IsCompleted;
+                exerciseToProfileData.Language = completeProgrammingExercises.ElementAt(i).Language;
+                exercisesToProfileData.Add(exerciseToProfileData);
+            }
+            solvedExercices.ExercisesToProfileData = exercisesToProfileData;
+            solvedExercices.Tried = tries;
+            solvedExercices.Solved = solved;
+            string jsonString = JsonConvert.SerializeObject(solvedExercices);
+            return Content(jsonString, "application/json");
+        }
         // GET: api/<CodesController>
         [HttpGet]
         public async Task<IActionResult> Get()
@@ -113,8 +145,8 @@ namespace ms_practice.Controllers
                     clientSecret = _configuration.GetSection("JDoodleAPIKeys")["ClientSecret"],
                     script = executeExamples.Script,
                     stdin = examples.ElementAt(i).input,
-                    language = "java",
-                    versionIndex = "4",
+                    language = executeExamples.Language,
+                    versionIndex = executeExamples.Version,
                     compileOnly = false,
                 };
 
@@ -162,8 +194,8 @@ namespace ms_practice.Controllers
                     clientSecret = _configuration.GetSection("JDoodleAPIKeys")["ClientSecret"],
                     script = executeTestCases.Script,
                     stdin = testCases.ElementAt(i).input,
-                    language = "java",
-                    versionIndex = "4",
+                    language = executeTestCases.Language,
+                    versionIndex = executeTestCases.Version,
                     compileOnly = false,
                 };
 
@@ -189,20 +221,37 @@ namespace ms_practice.Controllers
                 }
                 responseExecuteTestCases.Add(respoAux);
             }
+            Boolean alreadyCompleted = _context.CompleteExercises.Any(t => t.Language == executeTestCases.Language
+                                                                            && t.ProgrammingExercise == programmingExercise
+                                                                            && t.IdUser == executeTestCases.IdUser
+                                                                            && t.IsCompleted == true);
+            if (alreadyCompleted) { return new ObjectResult("Ya ha solucionado este ejercicio en este lenguaje."); }
             if (complete)
             {
+                
                 CompleteProgrammingExercise completeProgrammingExercise = new CompleteProgrammingExercise();
                 completeProgrammingExercise.ProgrammingExercise = programmingExercise;
                 completeProgrammingExercise.Script = executeTestCases.Script;
-                completeProgrammingExercise.Version = "4";
-                completeProgrammingExercise.Language = "java";
+                completeProgrammingExercise.Version = executeTestCases.Version;
+                completeProgrammingExercise.Language = executeTestCases.Language;
                 completeProgrammingExercise.SendDate = DateTime.Now;
                 completeProgrammingExercise.IdUser = executeTestCases.IdUser;
+                completeProgrammingExercise.IsCompleted = true;
                 _context.CompleteExercises.Add(completeProgrammingExercise);
                 await _context.SaveChangesAsync();
                 return new ObjectResult("Completado");
             }
             else {
+                CompleteProgrammingExercise completeProgrammingExercise = new CompleteProgrammingExercise();
+                completeProgrammingExercise.ProgrammingExercise = programmingExercise;
+                completeProgrammingExercise.Script = executeTestCases.Script;
+                completeProgrammingExercise.Version = executeTestCases.Version;
+                completeProgrammingExercise.Language = executeTestCases.Language;
+                completeProgrammingExercise.SendDate = DateTime.Now;
+                completeProgrammingExercise.IdUser = executeTestCases.IdUser;
+                completeProgrammingExercise.IsCompleted = false;
+                _context.CompleteExercises.Add(completeProgrammingExercise);
+                await _context.SaveChangesAsync();
                 return new ObjectResult("No es correcto");
             }
         }

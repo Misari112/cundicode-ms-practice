@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ms_practice.Models
+namespace ms_practice.Entities
 {
     public class ProgrammingExercise
     {
@@ -10,7 +10,7 @@ namespace ms_practice.Models
         public string? DifficultyLevel { get; set; }
         public string? Categories { get; set; }
         public string? Description { get; set; }
-        public string? Examples { get; set; }      
+        public string? Examples { get; set; }
         public float TimeLimit { get; set; }
         public int MemoryLimit { get; set; }
         public string? FunctionSignature { get; set; }
