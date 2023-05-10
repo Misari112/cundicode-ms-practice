@@ -11,6 +11,8 @@ using System;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using ms_practice.Entities;
+using ms_practice.Models.Response;
+using ms_practice.Models.Query;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

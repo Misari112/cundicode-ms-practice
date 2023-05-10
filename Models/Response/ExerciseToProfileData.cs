@@ -1,4 +1,4 @@
-﻿namespace ms_practice.Models
+﻿namespace ms_practice.Models.Response
 {
     public class ExerciseToProfileData
     {

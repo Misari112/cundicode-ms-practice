@@ -11,5 +11,6 @@ namespace ms_practice.Data
         }
         public DbSet<ProgrammingExercise> Exercises { get; set; }
         public DbSet<CompleteProgrammingExercise> CompleteExercises { get; set; }
+        public DbSet<Resources> Resources { get; set; }
     }
 }
